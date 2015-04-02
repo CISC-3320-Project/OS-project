@@ -47,7 +47,7 @@ public class os {
     /*
     this is basic structure of OS. 
     More function will be added to this file or new classes will be created
-    such as memoryManagment(), CPUScheduler(), timeManager(), dispatcher, swapper()
+    such as memoryManagment(), CPUScheduler(), timeManager(), dispatcher, swapper()...
     */
     
 }
