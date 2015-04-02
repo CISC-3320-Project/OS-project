@@ -49,5 +49,12 @@ public class os {
     More function will be added to this file or new classes will be created
     such as memoryManagment(), CPUScheduler(), timeManager(), dispatcher, swapper()...
     */
+    public static void CPUScheduler(){
+        //will use Round robin for our CPU scheduling
+    }
+    
+    public void swapper(){
+        //internal method that will swap from memory to the drum
+    }
     
 }
