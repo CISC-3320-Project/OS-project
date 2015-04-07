@@ -19,7 +19,7 @@ public class os {
     
     public static void Dskint(int [] a, int[] p){
         //notify that I/O was completed
-        //not sure what this function shoud do. Have to clarify
+        //select new job from to do I/O and send it to fo I/O
         
     }
     
