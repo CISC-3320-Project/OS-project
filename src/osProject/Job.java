@@ -8,7 +8,7 @@ package osProject;
 
 /**
  *
- * @author Jonson
+ * @author Johnson
  */
 public class Job {
     private int jobNumber; 
