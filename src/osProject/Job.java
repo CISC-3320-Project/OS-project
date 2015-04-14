@@ -8,9 +8,51 @@ package osProject;
 
 /**
  *
- * @author Anton
+ * @author Jonson
  */
 public class Job {
-    //TODO: declare variables and write accessors and mutators
+    private int jobNumber; 
+    private int jobPriority;
+    private int jobSize;
+    private int maxTime;
+    private int enterCPUTime;
+    private boolean inMemory;
+    private int address;
+    private boolean doingIO;
+    private boolean swapping;
+    private boolean blocked;
+    private boolean running;
+    private boolean killed;
+    
+    //TODO JONSON: write accessors and mutators for all variables
+    public Job(){
+        jobNumber = -1;
+        jobPriority = -1;
+        jobSize = 0;
+        maxTime = -1;
+        enterCPUTime = -1;
+        inMemory = false;
+        address = -1;
+        doingIO = false;
+        swapping = false;
+        blocked = false;
+        running = false;
+        killed = false;
+    }
+    
+    public Job(int num, int priority, int size, int time, int currTime){
+        jobNumber = num;
+        jobPriority = priority;
+        jobSize = size; 
+        maxTime = time;
+        enterCPUTime = currTime;
+        inMemory = false;
+        address = -1;
+        doingIO = false;
+        swapping = false;
+        blocked = false;
+        running = false;
+        killed = false;
+    }
     
 }
