@@ -26,7 +26,7 @@ public class os {
     }
     
     public static void Crint(int [] a, int [] p){
-        //TODO Jonson
+        //TODO Johnson
         bookkeeper(p[5]);
         //when new job come into system SOS call this function
         //so this function should take care of saving all information about job
@@ -88,7 +88,7 @@ public class os {
     }
     
     public static void Tro(int[] a, int [] p){
-        //TODO Jonson
+        //TODO Jonhson
         bookkeeper(p[5]);
         /**
          * Timer run out
@@ -101,7 +101,7 @@ public class os {
     }
     
     public static int CPUScheduler(){
-        //TODO Jonson
+        //TODO Jonhson
         //will use Round robin for our CPU scheduling
         //return index of the job in the readyQueue to run
         //if there is no job to run return -1
@@ -109,7 +109,7 @@ public class os {
     }
     
     public static void swapper(){
-        //TODO Philipe
+        //TODO Philippe
         /**internal method that will swap from memory to the drum
          * if currently nothing swapping, do new swap into memory
          */
@@ -118,7 +118,7 @@ public class os {
         }
     }
     public static int bookkeeper(int currTime){
-        //TODO Philipe
+        //TODO Philippe
         /**
          * function should calculate how much time interrupted job spend on CPU
          * time spend on CPU have to be subtracted from the maxCPUTime
@@ -129,7 +129,7 @@ public class os {
     }
     
     public static void runJob(int [] a, int [] p){
-        //TODO Philipe
+        //TODO Philippe
         /**
          * this function call CPUScheduler() to select job from readyQueue
          * that will be run on CPU
@@ -141,7 +141,7 @@ public class os {
         
     }
     public static void runIO(){
-        //TODO Philipe
+        //TODO Philippe
         /**
          * if no job processing IO pick next to do IO
          * IO queue is empty function should do nothing
@@ -153,7 +153,7 @@ public class os {
     }
     
     public static void terminateJob(int position){
-        //TODO Philipe
+        //TODO Philippe
         /**
          * accepts position of the job on the readyQueue that have to be terminated
          * freed up memory
