@@ -16,7 +16,6 @@ public class os {
         //the first function called by SOS
         //intialize variables here so it will be visible for SOS
         jobTable = new LinkedList<Job>();
-        readyQueue = new LinkedList<Job>();
         memory = new MemoryManager();
         IOQueue = new LinkedList();
         swapInProgress = false;
