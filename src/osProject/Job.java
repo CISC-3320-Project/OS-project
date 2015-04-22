@@ -55,4 +55,91 @@ public class Job {
         killed = false;
     }
     
+    public int getJobNumber(){
+    	return jobNumber; 
+    }
+    
+    public void setJobNumber(int jobNumber){
+    	this.jobNumber = jobNumber; 
+    }
+    
+    public int getPriority(){
+    	return priority; 
+    }
+    
+    public void setPriority(int priority){
+    	this.priority = priority 
+    }
+    
+    public int getJobSize(){
+    	return jobSize;
+    }
+    
+    public void setJobSize(int jobSize){
+    	this.jobSize = jobSize; 
+    }
+    
+    public int getMaxTime(){
+    	return maxTime();
+    }
+    
+    public void setMaxTime(int maxTime){
+    	this.maxTime = maxTime; 
+    }
+    
+    public int getEnterCPUTime(){
+    	return enterCPUTime; 
+    }
+    
+    public void setEnterCPUTime(int enterCPUTime){
+    	this.enterCPUTime = enterCPUTime; 
+    }
+    
+    public boolean getInMemory(){
+    	return inMemory; 
+    }
+    
+    public void setInMemory(boolean inMemory){
+    	this.inMemory = inMemory; 
+    }
+    
+    public boolean getDoingIO(){
+    	return doingIO; 
+    }
+    
+    public void setDoingIO(boolean doingIO){
+    	this.doingIO = doingIO; 
+    }
+    
+    public boolean getSwapping(){
+    	return swapping; 
+    }
+    
+    public void setSwapping(boolean swapping){
+    	this.swapping = swapping; 
+    }
+    
+    public boolean getBlocked(){
+    	return blocked; 
+    }
+    
+    public void setBlocked(boolean blocked){
+    	this.blocked = blocked; 
+    }
+    
+    public boolean getRunning(){
+    	return running; 
+    }
+    
+    public void setRunning(boolean running){
+    	this.running = running; 
+    }
+    
+    public boolean getKilled(){
+    	return killed; 
+    }
+    
+    public void setKilled(boolean killed){
+    	this.killed = killed; 
+    }
 }
