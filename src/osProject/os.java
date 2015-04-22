@@ -42,6 +42,14 @@ public class os {
         //function should find job that was send to do I/O
         //mark that I/O for that job was done and 
         //select new job from IO queue to do I/O and send it to do I/O
+        processingIO = false;
+        int posOfIOJob = findJobDoingIO();
+        jobTable.get(posOfIOJob).setDoingIO(false);
+        jobTable.get(posOfIOJob).setBlocked(false);
+        jobTable.get(posOfIOJob).setRequestIO(false);
+        if(jobTable.get(posOfIOJob).getKilled()){
+            terminateJob(posOfIOJob);
+        }
         runIO();
         runJob(a,p);
     }
@@ -53,7 +61,14 @@ public class os {
         //boolean should be changed to indicate that drum is free for another swapp
         //job that was swapped have to be moved from jobTable to readyQueue
         //try to swap another job into memory
-        swapper();
+        swapInProgress = false;
+        for(int i = 0; i<jobTable.size(); i++){
+            if(jobTable.get(i).getSwapping()){
+                jobTable.get(i).setSwapping(false);
+                jobTable.get(i).setInMemory(true);
+                break;
+            }       
+        }
         runJob(a,p);
     }
     
@@ -73,16 +88,28 @@ public class os {
             //and memory have to be freed up
             //if job currently doing I/O or waiting for I/O set job flag 'killed'
             //to true
+            if(jobTable.get(stoppedJob).getDoingIO() || jobTable.get(stoppedJob).getRequestIO())
+                jobTable.get(stoppedJob).setKilled(true);
+            else{
+                terminateJob(stoppedJob);
+            }
         }
         if(a[0] == 6){
             //request to do I/O
             //place jobNumber into IOQueue
-            //try to run IO if no job doing IO    
+            //try to run IO if no job doing IO 
+            jobTable.get(stoppedJob).setRequestIO(true);
+            IOQueue.add(jobTable.get(stoppedJob).getJobNumber());
+            if(IOQueue.size()==1 && !processingIO){ //if job requesting I/O is the only job that wants do I/O then send it to do I/O
+                runIO();
+            }
         }
         if(a[0] == 7){
             //request to be blocked
             //job have to be blocked when it is doing IO
             //or requested IO
+            if(jobTable.get(stoppedJob).getDoingIO() || jobTable.get(stoppedJob).getRequestIO())
+                jobTable.get(stoppedJob).setBlocked(true);
         }
         runJob(a,p);
     }
@@ -171,6 +198,9 @@ public class os {
          * return index of running job on the readyQueue
          * otherwise return -1
          */
+        for(int i = 0; i<jobTable.size();i++)
+            if(jobTable.get(i).getRunning())
+                return i;
         return -1;
     }
     public static int findJobDoingIO(){
@@ -178,12 +208,18 @@ public class os {
          * return index of job doing IO on the readyQueue
          * otherwise return -1
          */
+        for(int i = 0; i<jobTable.size();i++)
+            if(jobTable.get(i).getDoingIO())
+                return i;
         return -1;
     }
     public static int findJobNumber(int number){
         //accepts number of the job
         //return position of the job in the ready queue
         //if no such number return -1
+        for(int i = 0; i<jobTable.size();i++)
+            if(jobTable.get(i).getJobNumber() == number)
+                return i;
         return -1;
     }
 }
