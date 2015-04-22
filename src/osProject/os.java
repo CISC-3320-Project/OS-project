@@ -6,7 +6,7 @@ import java.util.*;
  */
 public class os {
     //declare all nesseccary variables here
-    static List<Job> jobTable; //store jobs tha is not in memory but enter system
+    static List<Job> jobTable; //store jobs that is not in memory but enter system
     static List<Job> readyQueue; //store all job that is currently in memory
     static MemoryManager memory; //representation of the 100K memory
     static Queue<Integer> IOQueue; //queue of jobs that waiting for I/O
@@ -31,6 +31,7 @@ public class os {
         //when new job come into system SOS call this function
         //so this function should take care of saving all information about job
         //this function will store jobs in jobTable
+        jobTable.add(new Job(p[1],p[2],p[3],p[4],p[5])); 
         swapper();
         runJob(a,p);
     }
@@ -105,6 +106,25 @@ public class os {
         //will use Round robin for our CPU scheduling
         //return index of the job in the readyQueue to run
         //if there is no job to run return -1
+    	
+    	/*
+    	* Pseudo Code 
+    	* CPU scheduler picks the process from the circular/ready queue , set a timer to interrupt it after 1 time slice 
+    	* / quantum  and dispatches it .
+
+    	*  If process has burst time less than 1 time slice/quantum              
+    	        >  Process will leave the CPU after the completion
+    	        >  CPU will proceed with the next process in the ready queue / circular queue .
+    	    else If process has burst time longer than 1 time slice/quantum
+    	        >  Timer will be stopped . It cause interruption to the OS .
+    	        >   Executed process is then placed at the tail of the circular / ready  querue by applying  the context switch
+                >  CPU scheduler then proceeds by selecting the next process in the ready queue .           
+    
+    	*/
+    	
+    	
+    	
+    	
         return -1;
     }
     
