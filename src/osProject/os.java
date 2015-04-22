@@ -7,7 +7,6 @@ import java.util.*;
 public class os {
     //declare all nesseccary variables here
     static List<Job> jobTable; //store jobs that is not in memory but enter system
-    static List<Job> readyQueue; //store all job that is currently in memory
     static MemoryManager memory; //representation of the 100K memory
     static Queue<Integer> IOQueue; //queue of jobs that waiting for I/O
     static boolean swapInProgress;
