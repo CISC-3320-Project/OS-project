@@ -1,10 +1,8 @@
-/**
- * Class will represent memory and functions on it.
- * Should be able to add to the memory
+/** * Should be able to add to the memory
  * delete from the memory
  * find free space for job
  */
-package osProject;
+//package osProject;
 
 import java.util.LinkedList;
 import java.util.List;

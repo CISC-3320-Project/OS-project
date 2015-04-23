@@ -4,7 +4,7 @@
  * Later program will create a job table to store job objects
 
 */
-package osProject;
+//package osProject;
 
 /**
  *
@@ -19,6 +19,7 @@ public class Job {
     private boolean inMemory;
     private int address;
     private boolean doingIO;
+    private boolean requestIO; 
     private boolean swapping;
     private boolean blocked;
     private boolean running;
@@ -34,6 +35,7 @@ public class Job {
         inMemory = false;
         address = -1;
         doingIO = false;
+        requestIO = false; 
         swapping = false;
         blocked = false;
         running = false;
@@ -49,6 +51,7 @@ public class Job {
         inMemory = false;
         address = -1;
         doingIO = false;
+        requestIO = false; 
         swapping = false;
         blocked = false;
         running = false;
@@ -63,12 +66,12 @@ public class Job {
     	this.jobNumber = jobNumber; 
     }
     
-    public int getPriority(){
-    	return priority; 
+    public int getjobPriority(){
+    	return jobPriority; 
     }
     
-    public void setPriority(int priority){
-    	this.priority = priority 
+    public void setJobPriority(int jobPriority){
+    	this.jobPriority = jobPriority; 
     }
     
     public int getJobSize(){
@@ -80,7 +83,7 @@ public class Job {
     }
     
     public int getMaxTime(){
-    	return maxTime();
+    	return maxTime;
     }
     
     public void setMaxTime(int maxTime){
@@ -103,12 +106,29 @@ public class Job {
     	this.inMemory = inMemory; 
     }
     
+    public int getAddress(){
+    	return address; 
+    }
+    
+    public void setAddress(int address){
+    	this.address = address; 
+    }
+    
+    
     public boolean getDoingIO(){
     	return doingIO; 
     }
     
     public void setDoingIO(boolean doingIO){
     	this.doingIO = doingIO; 
+    }
+    
+    public boolean getRequestIO(){
+    	return requestIO; 
+    }
+    
+    public void setRequestIO(boolean requestIO){
+    	this.requestIO = requestIO; 
     }
     
     public boolean getSwapping(){
