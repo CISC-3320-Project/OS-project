@@ -113,8 +113,8 @@ public class os {
         runJob(a,p);
     }
     
-    public static void Tro(int[] a, int [] p){
-        //TODO Jonhson
+    public static void Tro(int[] a, int [] p, int index){
+        //TODO Johnson
         bookkeeper(p[5]);
         /**
          * Timer run out
@@ -123,6 +123,12 @@ public class os {
          * or not doing IO
          * Also when memory freed up try to swap in new job
          */
+        
+        if(jobTable.get(index).getJobSize()  == 0)
+        	//terminate()
+        else
+        	//Add to the end of the arraylist. 
+        
         runJob(a,p);
     }
     
@@ -131,21 +137,16 @@ public class os {
         //will use Round robin for our CPU scheduling
         //return index of the job in the readyQueue to run
         //if there is no job to run return -1
+    	int quantum = 5; 
     	
-    	/*
-    	* Pseudo Code 
-    	* CPU scheduler picks the process from the circular/ready queue , set a timer to interrupt it after 1 time slice 
-    	* / quantum  and dispatches it .
-
-    	*  If process has burst time less than 1 time slice/quantum              
-    	        >  Process will leave the CPU after the completion
-    	        >  CPU will proceed with the next process in the ready queue / circular queue .
-    	    else If process has burst time longer than 1 time slice/quantum
-    	        >  Timer will be stopped . It cause interruption to the OS .
-    	        >   Executed process is then placed at the tail of the circular / ready  querue by applying  the context switch
-                >  CPU scheduler then proceeds by selecting the next process in the ready queue .           
-    
-    	*/
+    	
+    	while (jobTable.isEmpty != true){
+    		for(int i = 0; i < 100000; i++){
+    			if(jobTable.get(i).getJobSize() < quantum &&
+    			   jobTable.get(i).getJobSize() != 0)
+    				return jobTable.get(i); 
+    		}
+    	}
     	
     	
     	
@@ -183,7 +184,30 @@ public class os {
          * a[0] = 1, p[2], p[3], p[4]
          * also time when job enter CPU have to be recorded
          */
-        
+    	
+    	int index = CPUScheduler(); 
+    	int quantum = 5;
+    	
+    	if(index != -1){
+    		if(jobTable.get(index).getJobSize() < quatum){
+    			a[0] = 2;
+    			p[2] = jobTable.get(index).getAddress(); 
+    			p[3] = jobTable.get(index).getJobSize(); 
+    			p[4] = jobTable.get(index).getJobSize(); 
+    			updateJobSize(index,quantum);
+    			Tro(a,p,index);
+    		}
+    		else
+    		{
+    			a[0] = 2;
+    			p[2] = jobTable.get(index).getAddress();
+    			p[3] = jobTable.get(index).getJobSize();
+    			p[4] = quatum; 
+    			updateJobSize(index,quantum); 
+    			Tro(a,p,index); 
+    		
+    		}
+    	}
     }
     public static void runIO(){
         //TODO Philippe
@@ -240,4 +264,16 @@ public class os {
                 return i;
         return -1;
     }
+
+    public void updateJobSize(int index, int quantum){
+    	int jobSize = jobTable.get(index).getJobSize();
+    	int difference = quantum - jobSize;
+    	
+    	if(difference <= 0){
+    		jobTable.get(index).setJobSize(0);
+    	}
+    	else
+    		jobTable.get(index).setJobSize(difference);
+    }
 }
+
