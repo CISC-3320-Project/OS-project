@@ -9,12 +9,14 @@ public class os {
     static List<Job> jobTable; //store jobs that is not in memory but enter system
     static MemoryManager memory; //representation of the 100K memory
     static Queue<Integer> IOQueue; //queue of jobs that waiting for I/O
+    static int indexOfRunningJob; 
     static boolean swapInProgress;
     static boolean processingIO;
     
     public static void startup (){
         //the first function called by SOS
         //intialize variables here so it will be visible for SOS
+    	sos.ontrace(); 
         jobTable = new LinkedList<Job>();
         memory = new MemoryManager();
         IOQueue = new LinkedList();
@@ -25,12 +27,13 @@ public class os {
     
     public static void Crint(int [] a, int [] p){
         //TODO Johnson
+    	System.out.println("CRINT IS WORKING");  
         bookkeeper(p[5]);
         //when new job come into system SOS call this function
         //so this function should take care of saving all information about job
         //this function will store jobs in jobTable
         jobTable.add(new Job(p[1],p[2],p[3],p[4],p[5])); 
-        swapper();
+  
         runJob(a,p);
     }
     
@@ -113,7 +116,7 @@ public class os {
         runJob(a,p);
     }
     
-    public static void Tro(int[] a, int [] p, int index){
+    public static void Tro(int[] a, int [] p){
         //TODO Johnson
         bookkeeper(p[5]);
         /**
@@ -124,11 +127,15 @@ public class os {
          * Also when memory freed up try to swap in new job
          */
         
-        if(jobTable.get(index).getJobSize()  == 0)
-        	//terminate()
-        else
-        	//Add to the end of the arraylist. 
-        
+        if(jobTable.get(indexOfRunningJob).getJobSize() == 0){
+        	terminateJob(indexOfRunningJob); 
+        }
+        else{
+        	if(indexOfRunningJob == jobTable.size())
+        		indexOfRunningJob = 0; 
+        	else 
+        		indexOfRunningJob++; 
+        }
         runJob(a,p);
     }
     
@@ -138,18 +145,15 @@ public class os {
         //return index of the job in the readyQueue to run
         //if there is no job to run return -1
     	int quantum = 5; 
+    	System.out.println("CPUSCHEDULER IS WORKING"); 
     	
-    	
-    	while (jobTable.isEmpty != true){
-    		for(int i = 0; i < 100000; i++){
+    	while (jobTable.isEmpty() != true){
+    		for(int i = 0; i < jobTable.size(); i++){
     			if(jobTable.get(i).getJobSize() < quantum &&
     			   jobTable.get(i).getJobSize() != 0)
-    				return jobTable.get(i); 
+    				return i;
     		}
     	}
-    	
-    	
-    	
     	
         return -1;
     }
@@ -160,7 +164,9 @@ public class os {
          * if currently nothing swapping, do new swap into memory
          */
         if(!swapInProgress){
-           
+           for(int i = 0; i < jobTable.size(); i++){
+        	   boolean location = memory.addToMemory(jobTable.get(i));
+           }
         }
     }
     public static int bookkeeper(int currTime){
@@ -184,27 +190,30 @@ public class os {
          * a[0] = 1, p[2], p[3], p[4]
          * also time when job enter CPU have to be recorded
          */
+    	System.out.println("RUNJOB IS WORKING");
     	
-    	int index = CPUScheduler(); 
+    	indexOfRunningJob = CPUScheduler(); 
     	int quantum = 5;
     	
-    	if(index != -1){
-    		if(jobTable.get(index).getJobSize() < quatum){
+    	swapper(); 
+    	
+    	if(indexOfRunningJob != -1){
+    		if(jobTable.get(indexOfRunningJob).getJobSize() < quantum){
     			a[0] = 2;
-    			p[2] = jobTable.get(index).getAddress(); 
-    			p[3] = jobTable.get(index).getJobSize(); 
-    			p[4] = jobTable.get(index).getJobSize(); 
-    			updateJobSize(index,quantum);
-    			Tro(a,p,index);
+    			p[2] = jobTable.get(indexOfRunningJob).getAddress(); 
+    			p[3] = jobTable.get(indexOfRunningJob).getJobSize(); 
+    			p[4] = jobTable.get(indexOfRunningJob).getJobSize(); 
+    			updateJobSize(quantum);
+    			Tro(a,p);
     		}
     		else
     		{
     			a[0] = 2;
-    			p[2] = jobTable.get(index).getAddress();
-    			p[3] = jobTable.get(index).getJobSize();
-    			p[4] = quatum; 
-    			updateJobSize(index,quantum); 
-    			Tro(a,p,index); 
+    			p[2] = jobTable.get(indexOfRunningJob).getAddress();
+    			p[3] = jobTable.get(indexOfRunningJob).getJobSize();
+    			p[4] = quantum; 
+    			updateJobSize(quantum); 
+    			Tro(a,p); 
     		
     		}
     	}
@@ -228,6 +237,10 @@ public class os {
          * freed up memory
          * delete job from readyQueue
          */
+    	
+    	memory.removeFromMemory(jobTable.get(indexOfRunningJob));
+    	jobTable.get(indexOfRunningJob).setInMemory(false);
+    	jobTable.remove(indexOfRunningJob); 
         
     }
     /**
@@ -265,15 +278,15 @@ public class os {
         return -1;
     }
 
-    public void updateJobSize(int index, int quantum){
-    	int jobSize = jobTable.get(index).getJobSize();
+    public static void updateJobSize(int quantum){
+    	int jobSize = jobTable.get(indexOfRunningJob).getJobSize();
     	int difference = quantum - jobSize;
     	
     	if(difference <= 0){
-    		jobTable.get(index).setJobSize(0);
+    		jobTable.get(indexOfRunningJob).setJobSize(0);
     	}
     	else
-    		jobTable.get(index).setJobSize(difference);
+    		jobTable.get(indexOfRunningJob).setJobSize(difference);
     }
 }
 
