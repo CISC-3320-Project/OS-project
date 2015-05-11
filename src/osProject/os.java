@@ -9,7 +9,8 @@ public class os {
     static List<Job> jobTable; //store jobs that is not in memory but enter system
     static MemoryManager memory; //representation of the 100K memory
     static Queue<Integer> IOQueue; //queue of jobs that waiting for I/O
-    static int indexOfRunningJob; 
+    static List<Integer> drumArray; 
+    static int indexOfRunningJob = -1; 
     static boolean swapInProgress;
     static boolean processingIO;
     
@@ -19,25 +20,32 @@ public class os {
     	sos.ontrace(); 
         jobTable = new LinkedList<Job>();
         memory = new MemoryManager();
-        IOQueue = new LinkedList();
+        IOQueue = new LinkedList<Integer>();
         swapInProgress = false;
         processingIO = false;
         
     }
     
     public static void Crint(int [] a, int [] p){
+    	System.out.println("CRINT WORKING"); 
+
         //TODO Johnson
-    	System.out.println("CRINT IS WORKING");  
+    	//System.out.println("CRINT IS WORKING"); 
         bookkeeper(p[5]);
+        //System.out.println("P[5]: " + p[5]); 
         //when new job come into system SOS call this function
         //so this function should take care of saving all information about job
         //this function will store jobs in jobTable
+
         jobTable.add(new Job(p[1],p[2],p[3],p[4],p[5])); 
+        indexOfRunningJob = CPUScheduler(); 
   
         runJob(a,p);
     }
     
     public static void Dskint(int [] a, int[] p){
+    	System.out.println("DSKINT WORKING"); 
+
         //TODO Anton
         bookkeeper(p[5]);
         //notify that I/O was completed
@@ -46,6 +54,7 @@ public class os {
         //select new job from IO queue to do I/O and send it to do I/O
         processingIO = false;
         int posOfIOJob = findJobDoingIO();
+        System.out.println(posOfIOJob); 
         jobTable.get(posOfIOJob).setDoingIO(false);
         jobTable.get(posOfIOJob).setBlocked(false);
         jobTable.get(posOfIOJob).setRequestIO(false);
@@ -56,7 +65,9 @@ public class os {
         runJob(a,p);
     }
     
-    public static void Drint(int[] a, int[] p){
+    public static void Drmint(int[] a, int[] p){
+    	System.out.println("DRMINT WORKING"); 
+
         //TODO Anton
         bookkeeper(p[5]);
         //trasfer between drum and memory completed
@@ -75,9 +86,13 @@ public class os {
     }
     
     public static void Svc (int[] a, int [] p){
+    	System.out.println("SVC WORKING"); 
+
+    	
         //TODO Anton
-        int stoppedJob = bookkeeper(p[5]);
-        /**
+        //int stoppedJob = bookkeeper(p[5]);
+        int stoppedJob = indexOfRunningJob; 
+    	/**
         function handle service request
         should have 3 main IF statements, each for particular situation
         1st IF - job terminated (probably freed memory and change status of the job)
@@ -100,7 +115,8 @@ public class os {
             //request to do I/O
             //place jobNumber into IOQueue
             //try to run IO if no job doing IO 
-            jobTable.get(stoppedJob).setRequestIO(true);
+        	System.out.println("RUNNING 6"); 
+            jobTable.get(stoppedJob).setDoingIO(true);
             IOQueue.add(jobTable.get(stoppedJob).getJobNumber());
             if(IOQueue.size()==1 && !processingIO){ //if job requesting I/O is the only job that wants do I/O then send it to do I/O
                 runIO();
@@ -110,6 +126,7 @@ public class os {
             //request to be blocked
             //job have to be blocked when it is doing IO
             //or requested IO
+        	System.out.println("RUNNING 7"); 
             if(jobTable.get(stoppedJob).getDoingIO() || jobTable.get(stoppedJob).getRequestIO())
                 jobTable.get(stoppedJob).setBlocked(true);
         }
@@ -117,6 +134,8 @@ public class os {
     }
     
     public static void Tro(int[] a, int [] p){
+    	System.out.println("TRO WORKING"); 
+
         //TODO Johnson
         bookkeeper(p[5]);
         /**
@@ -149,27 +168,37 @@ public class os {
     	
     	while (jobTable.isEmpty() != true){
     		for(int i = 0; i < jobTable.size(); i++){
-    			if(jobTable.get(i).getJobSize() < quantum &&
-    			   jobTable.get(i).getJobSize() != 0)
     				return i;
+    			}	
     		}
-    	}
-    	
-        return -1;
+    	return -1; 
     }
+      
+    
     
     public static void swapper(){
         //TODO Philippe
         /**internal method that will swap from memory to the drum
          * if currently nothing swapping, do new swap into memory
          */
+    	System.out.println("SWAPPER IS WORKING"); 
+
+    	
         if(!swapInProgress){
-           for(int i = 0; i < jobTable.size(); i++){
-        	   boolean location = memory.addToMemory(jobTable.get(i));
-           }
-        }
-    }
-    public static int bookkeeper(int currTime){
+        	for(int i = 0; i < jobTable.size(); i++){
+        		if(jobTable.get(i).getAddress() == -1){
+        			swapInProgress = true; 
+        			memory.addToMemory(jobTable.get(i));
+        			sos.siodrum(jobTable.get(i).getJobNumber(), jobTable.get(i).getJobSize(),
+        						jobTable.get(i).getAddress(), 0);
+        		}
+        	}
+   		}
+
+   	}
+    public static void bookkeeper(int currTime){
+    	System.out.println("BOOKKEEPER WORKING"); 
+
         //TODO Philippe
         /**
          * function should calculate how much time interrupted job spend on CPU
@@ -177,7 +206,15 @@ public class os {
          * function also return position of the job on the readyQueue that was interrupted
          * if no job was running, return -1;
          */
-        return -1;
+    	if(indexOfRunningJob != -1 && jobTable.get(indexOfRunningJob).getRunning()){
+    		int temp = currTime - jobTable.get(indexOfRunningJob).getEnterCPUTime(); 
+    		int diff = jobTable.get(indexOfRunningJob).getMaxTime() - temp;   		
+    		jobTable.get(indexOfRunningJob).setMaxTime(diff);
+    		
+    		//return indexOfRunningJob; 
+    	}
+
+        //return -1;
     }
     
     public static void runJob(int [] a, int [] p){
@@ -195,27 +232,42 @@ public class os {
     	indexOfRunningJob = CPUScheduler(); 
     	int quantum = 5;
     	
+    	int quantumTimeNeededToFinish; 
+    	
+    	
+    	runIO(); 
     	swapper(); 
     	
+    	
     	if(indexOfRunningJob != -1){
-    		if(jobTable.get(indexOfRunningJob).getJobSize() < quantum){
-    			a[0] = 2;
-    			p[2] = jobTable.get(indexOfRunningJob).getAddress(); 
-    			p[3] = jobTable.get(indexOfRunningJob).getJobSize(); 
-    			p[4] = jobTable.get(indexOfRunningJob).getJobSize(); 
-    			updateJobSize(quantum);
-    			Tro(a,p);
+    		if(!jobTable.get(indexOfRunningJob).getInMemory() || jobTable.get(indexOfRunningJob).getBlocked()){
+    			System.out.println(jobTable.get(indexOfRunningJob).getInMemory()); 
+    			a[0] = 1; 
     		}
-    		else
-    		{
+    		else if(jobTable.get(indexOfRunningJob).getJobSize() < quantum){
     			a[0] = 2;
     			p[2] = jobTable.get(indexOfRunningJob).getAddress();
     			p[3] = jobTable.get(indexOfRunningJob).getJobSize();
-    			p[4] = quantum; 
-    			updateJobSize(quantum); 
-    			Tro(a,p); 
+    			p[4] = jobTable.get(indexOfRunningJob).getJobSize(); 
+    			//updateJobSize(quantum); 
+    			jobTable.get(indexOfRunningJob).setRunning(true);
+
+    			//Tro(a,p); 
     		
+    		}else{
+    			System.out.println("Current Time: "+jobTable.get(indexOfRunningJob).getEnterCPUTime());
+    			System.out.println("Max Time: " + jobTable.get(indexOfRunningJob).getMaxTime()); 
+
+    			a[0] = 2;
+    			p[2] = jobTable.get(indexOfRunningJob).getAddress();
+    			p[3] = jobTable.get(indexOfRunningJob).getJobSize();
+    			p[4] = quantum;
+    			//updateJobSize(quantum); 
+    			jobTable.get(indexOfRunningJob).setRunning(true);
     		}
+    	}
+    	else{
+    		a[0] = 1; 
     	}
     }
     public static void runIO(){
@@ -225,12 +277,46 @@ public class os {
          * IO queue is empty function should do nothing
          * 
          */
+    	System.out.println("RUNIO is WORKING"); 
+
+    	
+    	int jobTableIndex; 
+    	
         if(!processingIO){
-            
+        	System.out.println("processingIO WORKING"); 
+
+        	for(int i = 0; i < IOQueue.size(); i ++){
+            	System.out.println("IOQueue Peek: " + IOQueue.peek()); 
+
+				jobTableIndex = findJobNumber(IOQueue.peek());
+			
+					if (jobTable.get(jobTableIndex).getInMemory()){
+						sos.siodisk(IOQueue.poll());
+						//jobDoingIO = job.findJobNumber();
+						processingIO = true;
+					//	IOQueue.remove(i);
+						updateJob(jobTableIndex);
+						break;
+					}
+	
+			}
         }
     }
     
+    public static void updateJob(int jobNumber){
+    	System.out.println("updateJOB WORKING"); 
+
+		for (int i = 0; i < jobTable.size(); i++){
+			if(jobTable.get(i).getJobNumber() == jobNumber){
+				jobTable.set(i, jobTable.get(i));
+			}
+		}
+
+	}
+    
     public static void terminateJob(int position){
+    	System.out.println("terminateJOb WORKING"); 
+
         //TODO Philippe
         /**
          * accepts position of the job on the readyQueue that have to be terminated
@@ -249,6 +335,8 @@ public class os {
      * Anton will implement this functions
      */
     public static int findRunningJob(){
+    	System.out.println("findRunningJob WORKING"); 
+
         /**
          * return index of running job on the readyQueue
          * otherwise return -1
@@ -259,6 +347,8 @@ public class os {
         return -1;
     }
     public static int findJobDoingIO(){
+    	System.out.println("findJobDoingIO WORKING"); 
+
         /**
          * return index of job doing IO on the readyQueue
          * otherwise return -1
@@ -269,6 +359,8 @@ public class os {
         return -1;
     }
     public static int findJobNumber(int number){
+    	System.out.println("findJobNumber WORKING"); 
+
         //accepts number of the job
         //return position of the job in the ready queue
         //if no such number return -1
@@ -279,6 +371,9 @@ public class os {
     }
 
     public static void updateJobSize(int quantum){
+    	System.out.println("updateJobSize WORKING"); 
+
+    	
     	int jobSize = jobTable.get(indexOfRunningJob).getJobSize();
     	int difference = quantum - jobSize;
     	

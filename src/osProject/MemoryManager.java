@@ -23,6 +23,8 @@ public class MemoryManager {
     }
     
     public boolean addToMemory(Job j){
+    	System.out.println("addToMemory WORKING"); 
+
         int sizeNeeded = j.getJobSize();
         boolean startAddSet = false;
         int startAdd = -1;
@@ -31,9 +33,13 @@ public class MemoryManager {
         for(int i = 0; i<MAX_SIZE; i++){ //find spase in memory for job
             if(memory.get(i)==0 && startAddSet==false){
                 startAdd = i;
+
                 startAddSet = true;
             }
+
+            
             if((memory.get(i)==1 && startAddSet) || i == 99){
+
                 endAdd = i;
                 if((endAdd-startAdd)>=sizeNeeded){ //check if right size for our job
                     j.setAddress(startAdd); //assign starting address for tis job
@@ -46,14 +52,17 @@ public class MemoryManager {
             }   
         }
         if(startAddSet){
-            for(int i = j.getAddress(); i<j.getAddress()+j.getJobSize(); i++)
+            for(int i = j.getAddress(); i<j.getAddress()+j.getJobSize(); i++){
                 memory.set(i, 1);
+            }
+        j.setSwapping(true); 
         return true;
         }
         return false;  
     }
     
     public void removeFromMemory(Job j){
+
         for(int i = j.getAddress(); i<j.getAddress()+j.getJobSize(); i++)
             memory.set(i, 0);
     }
